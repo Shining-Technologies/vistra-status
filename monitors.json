@@ -1,0 +1,33 @@
+[
+  {
+    "id": "api-ping",
+    "name": "API",
+    "group": "API",
+    "url": "https://api.vistra.report/ping/",
+    "expect": { "status": [200], "bodyIncludes": "PONG" },
+    "timeoutMs": 15000
+  },
+  {
+    "id": "api-health",
+    "name": "API health checks",
+    "group": "API",
+    "url": "https://api.vistra.report/health/",
+    "expect": { "status": [200], "jsonStatusIn": ["ok", "degraded"] },
+    "degradedJsonStatusIn": ["degraded"],
+    "timeoutMs": 20000
+  },
+  {
+    "id": "website",
+    "name": "Website",
+    "url": "https://www.vistra.report/",
+    "expect": { "status": [200] },
+    "timeoutMs": 15000
+  },
+  {
+    "id": "portal",
+    "name": "Web app",
+    "url": "https://app.vistra.report/",
+    "expect": { "status": [200] },
+    "timeoutMs": 15000
+  }
+]

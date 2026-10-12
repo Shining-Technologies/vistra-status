@@ -1,0 +1,12 @@
+{
+  "name": "vistra-status",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free uptime monitor and public status page for Vistra",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "check:dry": "node scripts/check.mjs --dry-run",
+    "test": "node --test scripts/check.test.mjs"
+  },
+  "engines": { "node": ">=24" }
+}

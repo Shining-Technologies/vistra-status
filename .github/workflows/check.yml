@@ -1,0 +1,64 @@
+name: check
+
+on:
+  schedule:
+    # GitHub may delay scheduled runs by several minutes under load.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: status-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      # Always start from the branch tip, not the commit that was current when this run was queued.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Run checks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: node scripts/check.mjs
+
+      # check.mjs writes data/.commit only when this run is worth committing:
+      # a state changed, an incident issue was touched, or it is the hourly checkpoint.
+      - name: Commit status data
+        run: |
+          if [ ! -f data/.commit ]; then
+            echo "Nothing to commit ($(git status --porcelain | wc -l | tr -d ' ') local file changes ignored)."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data docs/status.json
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git commit -m "status: update"
+          if ! git push; then
+            echo "Push rejected, rebasing and retrying once."
+            if ! git pull --rebase -X theirs; then
+              git rebase --abort || true
+              echo "conflict, dropping this sample"
+              exit 0
+            fi
+            if ! git push; then
+              echo "second push failed, dropping this sample"
+              exit 0
+            fi
+          fi

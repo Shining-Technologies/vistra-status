@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vistra status</title>
+<meta name="description" content="Live status and 90-day uptime for the Vistra API, website and web app.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0F12" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='32' height='32' rx='7.5' fill='%234B43C4'/%3E%3Cpath d='M9 12.5L14.6 22.5' fill='none' stroke='%23A8A1F6' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M14.6 22.5L23.4 8.5' fill='none' stroke='%23FFFFFF' stroke-width='3.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
+<style>
+  :root {
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --ink: #0F1117;
+    --muted: #6A7180;
+    --line: #E4E7EC;
+    --iris: #4B43C4;
+    --up: #2F8F66;
+    --degraded: #B5811C;
+    --down: #D93636;
+    --none: #E4E7EC;
+    /* Text-only variants: the bright tokens above are for bars and dots, these reach 4.5:1 as text. */
+    --up-t: #1B6B49;
+    --degraded-t: #7F5708;
+    --down-t: #B02525;
+    --muted-2: #5A6070;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F0F12;
+      --surface: #16161A;
+      --ink: #ECECF1;
+      --muted: #9A9AA6;
+      --line: #27272E;
+      --iris: #9189F2;
+      --up: #52C495;
+      --degraded: #DCB45A;
+      --down: #EF5A5A;
+      --none: #27272E;
+      --up-t: #52C495;
+      --degraded-t: #DCB45A;
+      --down-t: #EF5A5A;
+      --muted-2: #9A9AA6;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 15px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: var(--iris); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--iris); outline-offset: 2px; border-radius: 4px; }
+
+  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 28px 0 20px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand svg { width: 32px; height: 32px; flex: none; }
+  .brand span { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
+  .top a { font-size: 14px; font-weight: 500; white-space: nowrap; }
+
+  .banner {
+    --c: var(--muted);
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--c);
+    border-radius: 12px;
+  }
+  @supports (background: color-mix(in srgb, red 10%, white)) {
+    .banner { background: color-mix(in srgb, var(--c) 9%, var(--surface)); border-color: color-mix(in srgb, var(--c) 28%, var(--line)); border-left-color: var(--c); }
+  }
+  .banner[data-s="up"] { --c: var(--up); }
+  .banner[data-s="degraded"] { --c: var(--degraded); }
+  .banner[data-s="down"] { --c: var(--down); }
+  .banner .dot { flex: none; width: 12px; height: 12px; margin-top: 6px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
+  .banner h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; }
+  .banner p { margin: 2px 0 0; color: var(--muted-2); font-size: 13.5px; }
+  .updated { margin: 10px 2px 0; color: var(--muted); font-size: 13px; }
+  .stale { margin: 6px 2px 0; color: var(--degraded-t); font-size: 13px; }
+
+  #groups { margin-top: 20px; display: grid; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .mon { padding: 18px 20px; }
+  .mon + .mon { border-top: 1px solid var(--line); }
+  .mhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .mhead h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.005em; min-width: 0; overflow-wrap: anywhere; }
+
+  .pill {
+    --c: var(--muted);
+    --ct: var(--muted-2);
+    flex: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    font-size: 12.5px; font-weight: 500;
+    color: var(--ct);
+    border: 1px solid var(--c);
+  }
+  @supports (background: color-mix(in srgb, red 10%, white)) {
+    .pill { background: color-mix(in srgb, var(--c) 11%, transparent); border-color: color-mix(in srgb, var(--c) 35%, transparent); }
+  }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .pill[data-s="up"] { --c: var(--up); --ct: var(--up-t); }
+  .pill[data-s="degraded"] { --c: var(--degraded); --ct: var(--degraded-t); }
+  .pill[data-s="down"] { --c: var(--down); --ct: var(--down-t); }
+
+  .bars {
+    margin-top: 14px;
+    display: grid; grid-template-columns: repeat(90, minmax(0, 1fr)); gap: 1px;
+    height: 32px;
+  }
+  .bars i { display: block; background: var(--none); border-radius: 1.5px; min-width: 0; }
+  .bars i.u { background: var(--up); }
+  .bars i.g { background: var(--degraded); }
+  .bars i.d { background: var(--down); }
+  .bars i:hover { opacity: 0.7; }
+
+  .scale { margin-top: 8px; display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+  .scale b { font-family: var(--mono); font-weight: 500; color: var(--ink); font-size: 12.5px; }
+  .meta { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+  .meta .mono { font-family: var(--mono); font-size: 12px; }
+
+  .empty { padding: 28px 20px; text-align: center; color: var(--muted); }
+  .empty strong { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+
+  footer { padding: 28px 0 40px; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+  footer p { margin: 0 0 6px; }
+  footer .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .top { padding-top: 20px; }
+    .banner { padding: 14px 16px; }
+    .banner h1 { font-size: 18px; }
+    .mon { padding: 16px; }
+    .bars { height: 28px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bars i { transition: opacity .12s ease; }
+  }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" role="img" aria-label="Vistra"><rect width="32" height="32" rx="7.5" fill="#4B43C4"/><path d="M9 12.5L14.6 22.5" fill="none" stroke="#A8A1F6" stroke-width="3.4" stroke-linecap="round"/><path d="M14.6 22.5L23.4 8.5" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"/></svg>
+      <span>Vistra status</span>
+    </div>
+    <a id="history-top" href="#" hidden>Incident history</a>
+  </header>
+
+  <main>
+    <section id="banner" class="banner" data-s="none" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <h1 id="banner-title">Loading…</h1>
+        <p id="banner-sub"></p>
+      </div>
+    </section>
+    <p id="updated" class="updated" hidden></p>
+    <p id="stale" class="stale" hidden></p>
+    <section id="groups" aria-label="Services"></section>
+  </main>
+
+  <footer>
+    <p>Services are checked every 5 minutes. Stable results are published about once an hour, and straight away when anything changes. Times are shown in Australia/Sydney.</p>
+    <div class="links">
+      <a id="history-foot" href="#" hidden>Incident history</a>
+      <a href="https://www.vistra.report/">vistra.report</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var TZ = 'Australia/Sydney';
+  var STALE_MS = 3 * 60 * 60 * 1000;
+  var STATE_LABEL = { up: 'Operational', degraded: 'Degraded', down: 'Down' };
+  var data = null;
+  var failed = false;
+  var loaded = false;
+  var liveKey = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var fmtSydney = new Intl.DateTimeFormat('en-AU', {
+    timeZone: TZ, day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+  });
+  function sydney(iso) { return fmtSydney.format(new Date(iso)); }
+
+  function ago(iso) {
+    var s = Math.max(0, (Date.now() - Date.parse(iso)) / 1000);
+    if (s < 60) return 'just now';
+    var m = Math.floor(s / 60);
+    if (m < 60) return m + ' min ago';
+    var h = Math.floor(m / 60);
+    if (h < 48) return h + ' h ago';
+    return Math.floor(h / 24) + ' days ago';
+  }
+
+  function pct(v) { return v == null ? '—' : v.toFixed(v === 100 ? 1 : 2) + '%'; }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function barClass(up) {
+    if (up == null) return 'n';
+    if (up >= 99.5) return 'u';
+    if (up >= 95) return 'g';
+    return 'd';
+  }
+
+  function overall(monitors) {
+    var n = monitors.length;
+    var down = monitors.filter(function (m) { return m.state === 'down'; }).length;
+    var deg = monitors.filter(function (m) { return m.state === 'degraded'; }).length;
+    if (!n) return { s: 'none', title: 'Waiting for the first check', sub: 'No status data has been published yet.' };
+    if (down === n) return { s: 'down', title: 'Major outage', sub: 'All of our services are currently unavailable. We are looking into it.' };
+    if (down) return { s: 'down', title: 'Partial outage', sub: 'Some services are currently unavailable. We are looking into it.' };
+    if (deg) return { s: 'degraded', title: 'Degraded performance', sub: 'Some services are running slower than usual or with reduced capability.' };
+    return { s: 'up', title: 'All systems operational', sub: 'Everything is running normally.' };
+  }
+
+  function monitorBlock(m) {
+    var box = el('div', 'mon');
+    var head = el('div', 'mhead');
+    head.appendChild(el('h2', null, m.name));
+    var pill = el('span', 'pill', STATE_LABEL[m.state] || 'Unknown');
+    pill.setAttribute('data-s', m.state);
+    head.appendChild(pill);
+    box.appendChild(head);
+
+    var daily = (m.daily || []).slice(-90);
+    var bars = el('div', 'bars');
+    bars.setAttribute('role', 'img');
+    bars.setAttribute('aria-label', m.name + ' uptime over the last 90 days: ' + pct(m.uptime90d));
+    for (var i = daily.length; i < 90; i++) {
+      var pad = el('i', 'n');
+      pad.title = 'No data';
+      bars.appendChild(pad);
+    }
+    daily.forEach(function (d) {
+      var b = el('i', barClass(d.up));
+      b.title = d.date + (d.up == null ? ': no data' : ': ' + d.up.toFixed(2) + '% uptime');
+      bars.appendChild(b);
+    });
+    box.appendChild(bars);
+
+    var scale = el('div', 'scale');
+    scale.appendChild(el('span', null, '90 days ago'));
+    var mid = el('span');
+    mid.appendChild(el('b', null, pct(m.uptime90d)));
+    mid.appendChild(document.createTextNode(' uptime'));
+    scale.appendChild(mid);
+    scale.appendChild(el('span', null, 'Today'));
+    box.appendChild(scale);
+
+    var meta = el('p', 'meta');
+    meta.title = m.lastCheck ? sydney(m.lastCheck) : '';
+    var parts = [];
+    if (m.lastCheck) parts.push('Last checked ' + ago(m.lastCheck) + ' (' + sydney(m.lastCheck) + ')');
+    meta.textContent = parts.join('');
+    if (m.lastMs != null) {
+      meta.appendChild(document.createTextNode(' · '));
+      meta.appendChild(el('span', 'mono', m.lastMs + ' ms'));
+    }
+    box.appendChild(meta);
+    return box;
+  }
+
+  function render() {
+    var monitors = (data && data.monitors) || [];
+    var o;
+    if (!loaded) o = { s: 'none', title: 'Loading…', sub: '' };
+    else if (failed && !monitors.length) o = { s: 'none', title: 'Status unavailable', sub: 'We could not load the latest status. Retrying every minute.' };
+    else o = overall(monitors);
+
+    // The banner is an aria-live region: only touch it when the overall state really changes.
+    var key = o.s + '|' + o.title;
+    if (key !== liveKey) {
+      liveKey = key;
+      $('banner').setAttribute('data-s', o.s);
+      $('banner-title').textContent = o.title;
+      $('banner-sub').textContent = o.sub;
+    }
+
+    var updated = $('updated');
+    if (data && data.generatedAt && monitors.length) {
+      updated.textContent = 'Updated ' + ago(data.generatedAt) + ' \u00b7 ' + sydney(data.generatedAt);
+      updated.hidden = false;
+    } else {
+      updated.hidden = true;
+    }
+
+    var stale = $('stale');
+    if (data && data.generatedAt && Date.now() - Date.parse(data.generatedAt) > STALE_MS) {
+      stale.textContent = 'Monitoring data has not refreshed since ' + sydney(data.generatedAt) + ', so the status above may be out of date.';
+      stale.hidden = false;
+    } else {
+      stale.hidden = true;
+    }
+
+    var groups = $('groups');
+    groups.textContent = '';
+    if (!monitors.length) {
+      var card = el('div', 'card');
+      var empty = el('div', 'empty');
+      if (!loaded) {
+        empty.appendChild(el('strong', null, 'Loading…'));
+      } else {
+        empty.appendChild(el('strong', null, failed ? 'Status data is not available right now' : 'No data yet'));
+        empty.appendChild(document.createTextNode(failed ? 'Please check back in a minute.' : 'The first check has not run yet. This page will fill in automatically.'));
+      }
+      card.appendChild(empty);
+      groups.appendChild(card);
+    } else {
+      var order = [];
+      var byKey = {};
+      monitors.forEach(function (m) {
+        var key = m.group || m.id;
+        if (!byKey[key]) { byKey[key] = []; order.push(key); }
+        byKey[key].push(m);
+      });
+      order.forEach(function (key) {
+        var card = el('article', 'card');
+        byKey[key].forEach(function (m) { card.appendChild(monitorBlock(m)); });
+        groups.appendChild(card);
+      });
+    }
+
+    var repo = data && data.repo;
+    var ok = typeof repo === 'string' && /^[\w.-]+\/[\w.-]+$/.test(repo);
+    ['history-top', 'history-foot'].forEach(function (id) {
+      var a = $(id);
+      if (ok) {
+        a.href = 'https://github.com/' + repo + '/issues?q=' + encodeURIComponent('is:issue label:incident');
+        a.rel = 'noopener';
+        a.hidden = false;
+      } else {
+        a.hidden = true;
+      }
+    });
+  }
+
+  function load() {
+    fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { data = j; failed = false; loaded = true; render(); })
+      .catch(function () { failed = true; loaded = true; render(); });
+  }
+
+  render();
+  load();
+  setInterval(load, 60000);
+  setInterval(render, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
+})();
+</script>
+</body>
+</html>
