@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T12:15:08.541Z",
+  "generatedAt": "2026-10-14T17:18:46.380Z",
   "repo": "Shining-Technologies/vistra-status",
   "monitors": [
     {
@@ -9,15 +9,14 @@
       "url": "https://api.vistra.report/ping/",
       "state": "up",
       "since": "2026-10-12T05:57:22.423Z",
-      "lastCheck": "2026-10-14T12:15:00.849Z",
-      "lastMs": 985,
+      "lastCheck": "2026-10-14T17:18:40.753Z",
+      "lastMs": 842,
       "lastHttp": 200,
       "tlsDaysLeft": 66,
       "uptime24h": 100,
       "uptime7d": 100,
       "uptime90d": 100,
       "daily": [
-        { "date": "2026-07-17", "up": null },
         { "date": "2026-07-18", "up": null },
         { "date": "2026-07-19", "up": null },
         { "date": "2026-07-20", "up": null },
@@ -106,7 +105,8 @@
         { "date": "2026-10-11", "up": null },
         { "date": "2026-10-12", "up": 100 },
         { "date": "2026-10-13", "up": 100 },
-        { "date": "2026-10-14", "up": 100 }
+        { "date": "2026-10-14", "up": 100 },
+        { "date": "2026-10-15", "up": 100 }
       ]
     },
     {
@@ -116,15 +116,14 @@
       "url": "https://api.vistra.report/health/",
       "state": "up",
       "since": "2026-10-12T05:57:22.423Z",
-      "lastCheck": "2026-10-14T12:15:00.849Z",
-      "lastMs": 2987,
+      "lastCheck": "2026-10-14T17:18:40.753Z",
+      "lastMs": 2797,
       "lastHttp": 200,
       "tlsDaysLeft": 66,
       "uptime24h": 100,
       "uptime7d": 100,
       "uptime90d": 100,
       "daily": [
-        { "date": "2026-07-17", "up": null },
         { "date": "2026-07-18", "up": null },
         { "date": "2026-07-19", "up": null },
         { "date": "2026-07-20", "up": null },
@@ -213,7 +212,8 @@
         { "date": "2026-10-11", "up": null },
         { "date": "2026-10-12", "up": 100 },
         { "date": "2026-10-13", "up": 100 },
-        { "date": "2026-10-14", "up": 100 }
+        { "date": "2026-10-14", "up": 100 },
+        { "date": "2026-10-15", "up": 100 }
       ]
     },
     {
@@ -222,15 +222,14 @@
       "url": "https://www.vistra.report/",
       "state": "up",
       "since": "2026-10-12T05:57:22.423Z",
-      "lastCheck": "2026-10-14T12:15:00.849Z",
-      "lastMs": 1143,
+      "lastCheck": "2026-10-14T17:18:40.753Z",
+      "lastMs": 1150,
       "lastHttp": 200,
       "tlsDaysLeft": 66,
       "uptime24h": 100,
       "uptime7d": 100,
       "uptime90d": 100,
       "daily": [
-        { "date": "2026-07-17", "up": null },
         { "date": "2026-07-18", "up": null },
         { "date": "2026-07-19", "up": null },
         { "date": "2026-07-20", "up": null },
@@ -319,7 +318,8 @@
         { "date": "2026-10-11", "up": null },
         { "date": "2026-10-12", "up": 100 },
         { "date": "2026-10-13", "up": 100 },
-        { "date": "2026-10-14", "up": 100 }
+        { "date": "2026-10-14", "up": 100 },
+        { "date": "2026-10-15", "up": 100 }
       ]
     },
     {
@@ -328,15 +328,14 @@
       "url": "https://app.vistra.report/",
       "state": "up",
       "since": "2026-10-12T05:57:22.423Z",
-      "lastCheck": "2026-10-14T12:15:00.849Z",
-      "lastMs": 326,
+      "lastCheck": "2026-10-14T17:18:40.753Z",
+      "lastMs": 654,
       "lastHttp": 200,
       "tlsDaysLeft": 87,
       "uptime24h": 100,
       "uptime7d": 100,
       "uptime90d": 100,
       "daily": [
-        { "date": "2026-07-17", "up": null },
         { "date": "2026-07-18", "up": null },
         { "date": "2026-07-19", "up": null },
         { "date": "2026-07-20", "up": null },
@@ -425,7 +424,8 @@
         { "date": "2026-10-11", "up": null },
         { "date": "2026-10-12", "up": 100 },
         { "date": "2026-10-13", "up": 100 },
-        { "date": "2026-10-14", "up": 100 }
+        { "date": "2026-10-14", "up": 100 },
+        { "date": "2026-10-15", "up": 100 }
       ]
     }
   ]
